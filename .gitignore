@@ -1,0 +1,15 @@
+# Node.js 관련
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Serverless 관련
+.serverless/
+
+# IDEs/Editors
+.vscode/
+.idea/
+
+# OS 관련
+.DS_Store
+Thumbs.db

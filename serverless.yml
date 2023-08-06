@@ -1,0 +1,28 @@
+service: serverless-blog
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  region: ap-northeast-2
+
+package:
+  include:
+    - views/**/*
+    - public/**/*
+
+functions:
+  app:
+    handler: index.handler
+    events:
+      - http:
+          path: /
+          method: ANY
+
+      - http:
+          path: /{proxy+}
+          method: ANY
+
+plugins:
+  - serverless-express
+  - serverless-offline
+

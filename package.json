@@ -1,0 +1,31 @@
+{
+  "name": "serverless-blog",
+  "version": "1.0.0",
+  "description": "서버 비용 없이 블로그를 만들고싶다. 서버가 없다 -> serverless -> lambda 를 써보자!",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoHwanhee/serverless-blog.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JoHwanhee/serverless-blog/issues"
+  },
+  "homepage": "https://github.com/JoHwanhee/serverless-blog#readme",
+  "dependencies": {
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "serverless-http": "^3.2.0"
+  },
+  "devDependencies": {
+    "serverless-domain-manager": "^7.1.1",
+    "serverless-express": "^2.0.12",
+    "serverless-offline": "^12.0.4"
+  }
+}
