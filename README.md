@@ -35,6 +35,13 @@ MongoDB Atlas는 클라우드에서 제공되는 MongoDB 데이터베이스 서�
 
 8. **테스트**: 배포 후 제공되는 URL로 블로그가 잘 작동하는지 확인하세요.
 
+## 통합 테스트
+- `serverless offline`
+
+## 단위 테스트
+- `npm run test`
+
+
 ## 도메인 달기 ( 주소에 프리픽스 제거하기 )
 
 1. AWS Management Console에서 API Gateway 서비스로 이동합니다.

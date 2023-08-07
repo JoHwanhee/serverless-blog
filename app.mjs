@@ -16,8 +16,6 @@ app.get('/', (req, res) => {
         { title: '제목1', content: '내용1' },
         { title: '제목2', content: '내용2' },
     ];
-    console.log('aa')
-
     res.render('index', { posts: posts });
 });
 
