@@ -65,3 +65,23 @@ describe('GET /post/:id', () => {
         return { title, content };
     }
 });
+
+describe('GET /test.txt', () => {
+    let sut;
+
+    beforeEach(async () => {
+        sut = await request(app).get('/test.txt');
+    });
+
+    it('200 응답 되어야한다.', async () => {
+        const actual = sut.statusCode;
+
+        expect(actual).toBe(200);
+    });
+
+    it('test.txt 파일의 내용이 "test" 인지 확인', async () => {
+        const actual = sut.text;
+
+        expect(actual).toBe('test');
+    });
+});
