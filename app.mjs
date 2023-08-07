@@ -5,6 +5,7 @@ const app = express()
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/post/:id', (req, res) => {
     const post = { title: '제목' + req.params.id, content: '내용' + req.params.id };
