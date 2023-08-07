@@ -34,3 +34,17 @@ MongoDB Atlas는 클라우드에서 제공되는 MongoDB 데이터베이스 서�
 7. **배포**: `serverless deploy` 명령어로 프로젝트를 AWS Lambda에 배포하세요.
 
 8. **테스트**: 배포 후 제공되는 URL로 블로그가 잘 작동하는지 확인하세요.
+
+## 도메인 달기 ( 주소에 프리픽스 제거하기 )
+
+1. AWS Management Console에서 API Gateway 서비스로 이동합니다.
+
+2. 왼쪽 사이드바에서 'Custom domain names'를 선택합니다.
+
+3. 'Create' 버튼을 클릭하고 원하는 도메인 이름을 입력합니다.
+
+4. 'Create domain name' 버튼을 클릭하여 도메인 이름을 생성합니다.
+
+5. 생성한 도메인 이름으로 이동하고, 'Configure API mappings' 섹션에서 'Add new mapping'을 클릭합니다.
+
+6. API와 stage를 선택하고, '/'를 Base Path로 입력하고 'Save'를 클릭합니다.
