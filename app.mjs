@@ -20,4 +20,13 @@ app.get('/', (req, res) => {
     res.render('index', { posts: posts });
 });
 
+app.get('/index.html', (req, res) => {
+    const posts = [
+        { title: '제목1', content: '내용1' },
+        { title: '제목2', content: '내용2' },
+    ];
+    res.render('index', { posts: posts });
+});
+
+
 export default app;
