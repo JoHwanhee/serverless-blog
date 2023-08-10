@@ -22,14 +22,28 @@
   "dependencies": {
     "ejs": "^3.1.9",
     "express": "^4.18.2",
+    "mongoose": "^7.4.2",
     "serverless-http": "^3.2.0"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.22.10",
+    "@babel/register": "^7.22.5",
     "cheerio": "^1.0.0-rc.12",
     "jest": "^29.6.2",
+    "mongodb": "^5.7.0",
     "serverless-domain-manager": "^7.1.1",
     "serverless-express": "^2.0.12",
     "serverless-offline": "^12.0.4",
-    "supertest": "^6.3.3"
+    "supertest": "^6.3.3",
+    "testcontainers": "^10.1.0"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.m?js$": "babel-jest"
+    },
+    "moduleFileExtensions": [
+      "js",
+      "mjs"
+    ]
   }
 }
