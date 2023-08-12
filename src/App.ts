@@ -1,7 +1,7 @@
 
 import express, { Express } from 'express';
 import path from 'path';
-import {IController} from "./controllers/controller";
+import {IController} from "./posts/IController";
 export class App {
     constructor(
         private readonly app: Express,

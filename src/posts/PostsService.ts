@@ -1,9 +1,9 @@
-import {IDatabase} from "./posts";
+import {IPostRepository} from "./IPostRepository";
 
 export class PostService {
-    private db: IDatabase;
+    private db: IPostRepository;
 
-    constructor(database: IDatabase) {
+    constructor(database: IPostRepository) {
         this.db = database;
     }
 

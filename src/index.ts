@@ -1,15 +1,18 @@
 import 'reflect-metadata';
 import serverless from 'serverless-http'
 import {PostService} from "./posts/PostsService";
-import {PostsController} from "./controllers/controller";
-import {App} from "./app";
-import {MongoDB} from "./posts/posts";
+import {PostsController} from "./posts/PostsController";
+import {App} from "./App";
 import express from "express";
+import {MongoPostRepository} from "./posts/MongoPostRepository";
+import {MongoConnection} from "./database/MongoConnection";
 
 async function initializeApp() {
     const mongoUri = process.env.MONGO_URI;
-    const database = new MongoDB();
-    await database.connect(mongoUri, 'testdb');
+
+    const db = await new MongoConnection()
+        .connect(mongoUri, 'testdb')
+    const database = new MongoPostRepository(db);
 
     const postService = new PostService(database);
     const postController = new PostsController(postService);

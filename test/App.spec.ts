@@ -5,19 +5,21 @@ import * as cheerio from 'cheerio';
 
 
 import { GenericContainer } from 'testcontainers';
-import {IDatabase, MongoDB} from "../src/posts/posts";
+import {IPostRepository} from "../src/posts/IPostRepository";
 import {PostService} from "../src/posts/PostsService";
-import {App} from "../src/app";
-import {PostsController} from "../src/controllers/controller";
+import {App} from "../src/App";
+import {PostsController} from "../src/posts/PostsController";
 // @ts-ignore
 import express from "express";
+import {MongoPostRepository} from "../src/posts/MongoPostRepository";
+import {MongoConnection} from "../src/database/MongoConnection";
 
 describe('App routes', () => {
     let sut
     let container;
     let appInstance;
     let mongoUri;
-    let database: IDatabase;
+    let repository: IPostRepository;
 
     let postService;
     let postController;
@@ -28,10 +30,11 @@ describe('App routes', () => {
             .withExposedPorts(27017)
             .start();
         mongoUri = `mongodb://${container.getHost()}:${container.getMappedPort(27017)}`;
+        const db = await new MongoConnection()
+            .connect(mongoUri, 'testdb')
+        repository = new MongoPostRepository(db);
 
-        database = new MongoDB();
-        await database.connect(mongoUri, 'testdb');
-        postService = new PostService(database);
+        postService = new PostService(repository);
         postController = new PostsController(postService);
 
         app = express();
@@ -41,14 +44,13 @@ describe('App routes', () => {
 
     afterAll(async () => {
         if (container) await container.stop();
-        if (database) await database.close()
     });
 
     describe('GET /', () => {
         beforeEach(async () => {
-            await database.clear()
-            await database.insertPost({ title: '제목1', content: '내용1' });
-            await database.insertPost({ title: '제목2', content: '내용2' });
+            await repository.clear()
+            await repository.insertPost({ title: '제목1', content: '내용1' });
+            await repository.insertPost({ title: '제목2', content: '내용2' });
             sut = await request(appInstance.express()).get('/');
         });
 
@@ -85,9 +87,9 @@ describe('App routes', () => {
         let sut;
 
         beforeEach(async () => {
-            await database.clear()
+            await repository.clear()
             const title = '제목1'
-            const post = await database.insertPost({ title, content: '내용1' });
+            const post = await repository.insertPost({ title, content: '내용1' });
 
             sut = await request(appInstance.express()).get(`/post/${encodeURIComponent(title)}`);
         });

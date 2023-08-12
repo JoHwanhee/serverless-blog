@@ -1,10 +1,12 @@
 import { GenericContainer } from 'testcontainers';
-import {IDatabase, MongoDB} from "../src/posts/posts";
+import {IPostRepository} from "../src/posts/IPostRepository";
 import {PostService} from "../src/posts/PostsService";
+import {MongoPostRepository} from "../src/posts/MongoPostRepository";
+import {MongoConnection} from "../src/database/MongoConnection";
 
 describe('PostService', () => {
     let container;
-    let db: IDatabase;
+    let repository: IPostRepository;
     let postService: PostService;
 
     beforeAll(async () => {
@@ -12,20 +14,20 @@ describe('PostService', () => {
             .withExposedPorts(27017)
             .start();
         const mongoUri = `mongodb://${container.getHost()}:${container.getMappedPort(27017)}`;
+        const db = await new MongoConnection()
+            .connect(mongoUri, 'testdb')
 
-        db = new MongoDB();
-        await db.connect(mongoUri, 'testdb');
-        postService = new PostService(db);
+        repository = new MongoPostRepository(db);
+        postService = new PostService(repository);
     }, 30000);
 
     afterAll(async () => {
-        if (db) await db.close(); // db에 close 메서드가 있다고 가정합니다.
         if (container) await container.stop();
     }, 30000);
 
     it('should fetch all posts', async () => {
-        await db.insertPost({ title: 'Test1' });
-        await db.insertPost({ title: 'Test2' });
+        await repository.insertPost({ title: 'Test1' });
+        await repository.insertPost({ title: 'Test2' });
 
         const posts = await postService.getAllPosts();
 
@@ -33,7 +35,7 @@ describe('PostService', () => {
     });
 
     it('should fetch post by id', async () => {
-        const { insertedId } = await db.insertPost({ title: 'Test' });
+        const { insertedId } = await repository.insertPost({ title: 'Test' });
 
         const post = await postService.getDetailedPost(encodeURIComponent('Test'));
 

@@ -1,8 +1,8 @@
-import {PostService} from "../posts/PostsService";
-import {Get} from "../decorators/Controller";
+import {PostService} from "./PostsService";
+import {Get} from "../decorators/decorators";
 import express from "express";
+import {IController} from "./IController";
 
-export interface IController { }
 
 export class PostsController implements IController {
 
@@ -18,7 +18,7 @@ export class PostsController implements IController {
 
     // @ts-ignore
     @Get('/post/:title')
-    async renderPost(req: any, res: any): Promise<void> {
+    async renderPost(req: express.Request, res: express.Response): Promise<void> {
         const post = await this.service.getDetailedPost(req.params.title);
         res.render('post', { post });
     }

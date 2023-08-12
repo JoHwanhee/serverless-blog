@@ -1,11 +1,15 @@
 import { GenericContainer } from 'testcontainers';
-import {IDatabase, MongoDB} from "../src/posts/posts";
+import {IPostRepository} from "../src/posts/IPostRepository";
 import {PostService} from "../src/posts/PostsService";
-import {PostsController} from "../src/controllers/controller";
+import {PostsController} from "../src/posts/PostsController";
+import {MongoPostRepository} from "../src/posts/MongoPostRepository";
+import {MongoConnection} from "../src/database/MongoConnection";
+import {Db} from "mongodb";
 
 describe('Controller functions', () => {
     let container;
-    let db: IDatabase;
+    let db: Db;
+    let repository: IPostRepository;
     let service: PostService;
     let controller: PostsController;
 
@@ -15,15 +19,15 @@ describe('Controller functions', () => {
             .start();
         const mongoUri = `mongodb://${container.getHost()}:${container.getMappedPort(27017)}`;
 
-        db = new MongoDB();
-        await db.connect(mongoUri, 'testdb');
+        db = await new MongoConnection()
+            .connect(mongoUri, 'testdb')
 
-        service = new PostService(db);
+        repository = new MongoPostRepository(db);
+        service = new PostService(repository);
         controller = new PostsController(service);
     }, 30000);
 
     afterAll(async () => {
-        if (db) await db.close(); // db에 close 메서드가 있다고 가정합니다.
         if (container) await container.stop();
     }, 30000);
 
@@ -37,7 +41,7 @@ describe('Controller functions', () => {
             render: jest.fn()
         };
 
-        await controller.renderHomepage(req, res as any);
+        await controller.renderHomepage(req as any, res as any);
 
         expect(res.render).toHaveBeenCalledWith('index', { posts: mockPosts });
     });
