@@ -2,7 +2,7 @@
   "name": "serverless-blog",
   "version": "1.0.0",
   "description": "서버 비용 없이 블로그를 만들고싶다. 서버가 없다 -> serverless -> lambda 를 써보자!",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "start": "tsc && serverless offline",
@@ -21,8 +21,8 @@
   "homepage": "https://github.com/JoHwanhee/serverless-blog#readme",
   "dependencies": {
     "ejs": "^3.1.9",
+    "mongodb": "^5.7.0",
     "express": "^4.18.2",
-    "mongoose": "^7.4.2",
     "serverless-http": "^3.2.0"
   },
   "devDependencies": {
