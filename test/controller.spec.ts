@@ -1,7 +1,7 @@
 import { GenericContainer } from 'testcontainers';
 import {IDatabase, MongoDB} from "../src/posts/posts";
 import {PostService} from "../src/posts/PostsService";
-import {PostsController} from "../src/posts/controller";
+import {PostsController} from "../src/controllers/controller";
 
 describe('Controller functions', () => {
     let container;

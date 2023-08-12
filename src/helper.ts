@@ -1,3 +1,5 @@
+
+
 type Func<T, R> = (arg?: T) => R | Promise<R>;
 
 export function pipe<T>(): (arg?: T) => Promise<T>;

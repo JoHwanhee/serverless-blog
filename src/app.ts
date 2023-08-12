@@ -1,17 +1,16 @@
+
 import express, { Express } from 'express';
 import path from 'path';
-import {IController} from "./posts/controller";
+import {IController} from "./controllers/controller";
 export class App {
-    private app: Express;
-    private postsController: IController;
-
-    constructor(app: Express, postsController: IController) {
+    constructor(
+        private readonly app: Express,
+        private readonly controllers: IController[]) {
         this.app = app;
-        this.postsController = postsController;
 
         this.setupViewEngine();
         this.setupStaticFiles();
-        this.setupRoutes();
+        this.setupRoutesFromControllers(app, controllers);
     }
 
     private setupViewEngine(): void {
@@ -25,18 +24,18 @@ export class App {
         this.app.use(express.static(path.join(currentDir, 'src/public')));
     }
 
-    private setupRoutes(): void {
-        this.app.get(['/','/index.html'], (req, res) => this.postsController.renderHomepage(req, res));
-        this.app.get('/post/:title', (req, res) => this.postsController.renderPost(req, res));
-    }
-
-    public listen(port: number): void {
-        this.app.listen(port, () => {
-            console.log(`Server running on port ${port}`);
+    private setupRoutesFromControllers(app: any, controllers: IController[]) {
+        controllers.forEach(controllerInstance => {
+            for (const key of Object.getOwnPropertyNames(Object.getPrototypeOf(controllerInstance))) {
+                const routeMetadata = Reflect.getMetadata("route", controllerInstance, key);
+                if (routeMetadata) {
+                    app[routeMetadata.method](routeMetadata.path, controllerInstance[key].bind(controllerInstance));
+                }
+            }
         });
     }
 
-    public getApp(): Express {
+    public express(): Express {
         return this.app;
     }
 }

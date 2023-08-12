@@ -8,7 +8,7 @@ import { GenericContainer } from 'testcontainers';
 import {IDatabase, MongoDB} from "../src/posts/posts";
 import {PostService} from "../src/posts/PostsService";
 import {App} from "../src/app";
-import {PostsController} from "../src/posts/controller";
+import {PostsController} from "../src/controllers/controller";
 // @ts-ignore
 import express from "express";
 
@@ -35,7 +35,7 @@ describe('App routes', () => {
         postController = new PostsController(postService);
 
         app = express();
-        appInstance = new App(app, postController);
+        appInstance = new App(app, [postController]);
 
     }, 30000);
 
@@ -49,7 +49,7 @@ describe('App routes', () => {
             await database.clear()
             await database.insertPost({ title: '제목1', content: '내용1' });
             await database.insertPost({ title: '제목2', content: '내용2' });
-            sut = await request(appInstance.getApp()).get('/');
+            sut = await request(appInstance.express()).get('/');
         });
 
         it('200 응답 되어야한다.', async () => {
@@ -89,7 +89,7 @@ describe('App routes', () => {
             const title = '제목1'
             const post = await database.insertPost({ title, content: '내용1' });
 
-            sut = await request(appInstance.getApp()).get(`/post/${encodeURIComponent(title)}`);
+            sut = await request(appInstance.express()).get(`/post/${encodeURIComponent(title)}`);
         });
 
         it('200 응답 되어야한다.', async () => {
@@ -116,7 +116,7 @@ describe('App routes', () => {
         let sut;
 
         beforeEach(async () => {
-            sut = await request(appInstance.getApp()).get('/test.txt');
+            sut = await request(appInstance.express()).get('/test.txt');
         });
 
         it('200 응답 되어야한다.', async () => {
