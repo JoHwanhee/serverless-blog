@@ -1,60 +1,61 @@
-# 서버리스 블로그
+# Serverless Blog with TDD
 
-서버 비용 없이 블로그를 만들고 싶다. 서버가 없다 -> serverless -> AWS Lambda를 활용해보자!
+Develop a cost-effective, serverless blog using AWS Lambda. This project is built following Test-Driven Development (TDD) principles.
 
-## 기본 구조
+## Architecture Overview
 - AWS Lambda + EJS + Node.js + MongoDB (Atlas 500MB free)
 
 ### AWS Lambda
-AWS Lambda는 이벤트에 반응하여 코드를 자동으로 실행해주는 컴퓨팅 서비스입니다. 서버리스 아키텍처에서 핵심적인 역할을 합니다.
+A compute service by AWS that triggers code in response to certain events, forming the foundation of our serverless infrastructure.
 
 ### EJS
-EJS는 JavaScript 템플릿 엔진입니다. 서버측에서 데이터를 HTML 템플릿에 바인딩하는데 사용됩니다.
+Embedded JavaScript - a templating engine to embed dynamic content into HTML on the server side.
 
 ### Node.js
-Node.js는 서버측에서 실행되는 JavaScript 런타임입니다. 비동기 이벤트 주도 JavaScript 런타임으로 효율적이고 확장 가능한 네트워크 애플리케이션을 만들 수 있습니다.
+An asynchronous, event-driven JavaScript runtime, enabling scalable server-side applications.
 
 ### MongoDB Atlas
-MongoDB Atlas는 클라우드에서 제공되는 MongoDB 데이터베이스 서비스입니다. 500MB 무료 티어를 제공하여 초기 프로젝트에 적합합니다.
+A cloud-hosted MongoDB service. With a free tier of up to 500MB, it`s ideal for starting projects.
 
-## 서버리스 블로그 만들기
+## Dependencies
 
-1. **AWS 설정**: AWS CLI와 Serverless Framework를 설정하고 필요한 권한을 가진 IAM 사용자를 생성하세요.
+### Main Dependencies:
+- **ejs (^3.1.9)**: Our chosen templating engine.
+- **express (^4.18.2)**: Web framework to structure our application.
+- **mongoose (^7.4.2)**: ORM to connect and interact with MongoDB.
+- **reflect-metadata (^0.1.13)**: Enables decorator metadata reflection capabilities.
+- **serverless-http (^3.2.0)**: Allows for express apps to be compatible with AWS Lambda.
 
-2. **Serverless 프로젝트 초기화**: `serverless create --template aws-nodejs` 명령어로 초기 프로젝트를 생성하세요.
+### Development Dependencies:
+The project also integrates various development tools to make the development smoother and uphold the TDD principles:
 
-3. **Express 및 EJS 설정**: `npm install express ejs` 명령어로 필요한 패키지를 설치하세요.
+- **jest (^29.6.2)** & **ts-jest (^29.1.1)**: Our main testing framework and its TypeScript support respectively.
+- **supertest (^6.3.3)**: Provides a high-level abstraction for testing HTTP assertions.
+- **testcontainers (^10.1.0)**: Offers a Node.js API for creating, managing, and disposing of containers during testing.
+- **serverless-offline (^12.0.4)**: Simulates AWS Lambda and API Gateway for local development.
+- **serverless-domain-manager (^7.1.1)**: Helpful for managing custom domains with the Serverless Framework.
 
-4. **MongoDB Atlas 연결**: Mongoose 라이브러리를 사용하여 MongoDB Atlas와 연결하세요.
+## Setting Up & Development
 
-5. **서버리스 플러그인 설치**: `serverless-express`와 `serverless-offline` 플러그인을 설치하여 로컬 개발 및 배포를 용이하게 합니다.
+1. **Set Up AWS**: Configure the AWS CLI and the Serverless Framework. Make sure to create an IAM user with the necessary permissions.
+2. **Initialize Serverless Project**: Run `serverless create --template aws-nodejs` to start a new project.
+3. **Set Up Express & EJS**: Install the required packages with `npm install express ejs`.
+4. **Connect MongoDB Atlas**: Utilize the Mongoose library to establish a connection with MongoDB Atlas.
+5. **Install Serverless Plugins**: Enhance your development and deployment experience by installing `serverless-express` and `serverless-offline` plugins.
+6. **Write Lambda Functions**: Draft functions that allow hosting your Express app on AWS Lambda.
+7. **Deploy**: Push your project to AWS Lambda using the `serverless deploy` command.
+8. **Test**: Post-deployment, access the provided URL to ensure your blog functions as expected.
 
-6. **Lambda 함수 작성**: Express 앱을 AWS Lambda에서 호스팅할 수 있도록 함수를 작성하세요.
+During development, ensure that you write tests first, adhering to the TDD approach. The project uses Jest as its primary testing framework. You can run your tests using:
 
-7. **배포**: `serverless deploy` 명령어로 프로젝트를 AWS Lambda에 배포하세요.
+```bash
+npm run test
+```
 
-8. **테스트**: 배포 후 제공되는 URL로 블로그가 잘 작동하는지 확인하세요.
-
-## 로컬 실행 (with serverless)
-- `npm run start`
-
-## 로컬 실행 (개발 서버 with testconteainers)
-- `npm run dev`
-
-## 단위 테스트
-- `npm run test`
-
-
-## 도메인 달기 ( 주소에 프리픽스 제거하기 )
-
-1. AWS Management Console에서 API Gateway 서비스로 이동합니다.
-
-2. 왼쪽 사이드바에서 'Custom domain names'를 선택합니다.
-
-3. 'Create' 버튼을 클릭하고 원하는 도메인 이름을 입력합니다.
-
-4. 'Create domain name' 버튼을 클릭하여 도메인 이름을 생성합니다.
-
-5. 생성한 도메인 이름으로 이동하고, 'Configure API mappings' 섹션에서 'Add new mapping'을 클릭합니다.
-
-6. API와 stage를 선택하고, '/'를 Base Path로 입력하고 'Save'를 클릭합니다.
+## Custom Domain Configuration
+1. Navigate to the API Gateway service in the AWS Management Console.
+1. From the left sidebar, choose `Custom domain names`.
+1. Click the `Create` button and input your desired domain name.
+1. Confirm by clicking `Create domain name`.
+1. Access your newly-created domain name, and under the `Configure API mappings` section, click `Add new mapping`.
+1. Choose your API and stage, set the Base Path as `/`, and click `Save`.
