@@ -8,12 +8,12 @@ export class PostService {
         this.db = database;
     }
 
-    async getAllPosts() {
-        return await this.db.getPosts();
+    async getAllPosts(owner: string) {
+        return await this.db.getPosts(owner);
     }
 
-    async getDetailedPost(title: string) {
-        return await this.db.getPostByTitle(title);
+    async getDetailedPost(owner: string, title: string) {
+        return await this.db.getPostByTitle(owner, title);
     }
 
     async createPost(post: Post) {

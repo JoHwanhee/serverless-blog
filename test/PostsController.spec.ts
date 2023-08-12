@@ -1,7 +1,7 @@
 import { GenericContainer } from 'testcontainers';
 import {IPostRepository} from "../src/posts/IPostRepository";
 import {PostService} from "../src/posts/PostsService";
-import {PostsController} from "../src/infra/PostsController";
+import {Controller} from "../src/infra/Controller";
 import {MongoPostRepository} from "../src/infra/MongoPostRepository";
 import {MongoConnection} from "../src/database/MongoConnection";
 import {IDbConnection} from "../src/database/IDbConnection";
@@ -11,7 +11,7 @@ describe('Controller functions', () => {
     let dbConnection: IDbConnection;
     let repository: IPostRepository;
     let service: PostService;
-    let controller: PostsController;
+    let controller: Controller;
 
     beforeAll(async () => {
         container = await new GenericContainer('mongo')
@@ -24,7 +24,7 @@ describe('Controller functions', () => {
 
         repository = new MongoPostRepository(dbConnection);
         service = new PostService(repository);
-        controller = new PostsController(service);
+        controller = new Controller(service);
     }, 20000);
 
     afterAll(async () => {

@@ -7,19 +7,18 @@ import {Post} from "../posts/Post";
 export class MongoPostRepository implements IPostRepository {
     constructor(private readonly db: IDbConnection) {}
 
-    async getPosts(): Promise<Post[]> {
-        const docs = await this.db.getDb().collection('posts').find({}).sort({ createdAt: -1 }).toArray();
+    async getPosts(owner: string): Promise<Post[]> {
+        const docs = await this.db.getDb().collection('posts').find({ owner }).sort({ createdAt: -1 }).toArray();
         return docs.map(doc => this.docToPost(doc));
     }
 
     async getPostById(id: any): Promise<Post | null> {
         const doc = await this.db.getDb().collection('posts').findOne({ _id: id });
-        console.log(doc)
         return doc ? this.docToPost(doc) : null;
     }
 
-    async getPostByTitle(title: string): Promise<Post | null> {
-        const doc = await this.db.getDb().collection('posts').findOne({ title });
+    async getPostByTitle(owner: string, title: string): Promise<Post | null> {
+        const doc = await this.db.getDb().collection('posts').findOne({ owner, title });
         return doc ? this.docToPost(doc) : null;
     }
 
@@ -41,6 +40,6 @@ export class MongoPostRepository implements IPostRepository {
             .withThumbnailUrl(doc.thumbnailUrl)
             .withDescription(doc.description)
             .withContent(doc.content)
-            .build();
+            .build(doc.owner);
     }
 }

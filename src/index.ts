@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import serverless from 'serverless-http';
 import { PostService } from "./posts/PostsService";
-import { PostsController } from "./infra/PostsController";
+import { Controller } from "./infra/Controller";
 import { App } from "./App";
 import express from "express";
 import { MongoPostRepository } from "./infra/MongoPostRepository";
@@ -24,7 +24,7 @@ function createPostService(repository) {
 }
 
 function createPostController(service) {
-    return new PostsController(service);
+    return new Controller(service);
 }
 
 export async function initializeApp(db: IDbConnection) {

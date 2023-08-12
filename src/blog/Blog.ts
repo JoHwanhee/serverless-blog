@@ -1,20 +1,18 @@
-export class Post {
+export class Blog {
     private readonly id: string;
-    private readonly owner: string;
+    private readonly owner: string
     private readonly title: string;
     private readonly thumbnailUrl: string;
     private readonly description: string;
-    private readonly content: string;
     private readonly createdAt: Date;
     private readonly updatedAt: Date;
 
-    constructor(builder: PostBuilder) {
+    constructor(builder: BlogBuilder) {
         this.id = builder.Id;
         this.owner = builder.Owner;
         this.title = builder.Title;
         this.thumbnailUrl = builder.ThumbnailUrl;
         this.description = builder.Description;
-        this.content = builder.Content;
         this.createdAt = builder.CreatedAt;
         this.updatedAt = builder.UpdatedAt;
     }
@@ -48,12 +46,7 @@ export class Post {
     }
 
     static get Builder() {
-        return new PostBuilder();
-    }
-
-    // Getter methods
-    getId(): string {
-        return this.id;
+        return new BlogBuilder();
     }
 
     getTitle(): string {
@@ -68,28 +61,28 @@ export class Post {
         return this.description;
     }
 
-    getContent(): string {
-        return this.content;
+    getOwner(): string {
+        return this.owner;
     }
 }
 
 
-class PostBuilder {
+class BlogBuilder {
     private id?: string;
     private title?: string;
+    private owner?: string;
     private thumbnailUrl?: string;
     private description?: string;
     private content?: string;
     private createdAt?: Date;
     private updatedAt?: Date;
-    private owner?: string;
-
-    get Owner(): string {
-        return this.owner;
-    }
 
     get Id() {
         return this.id;
+    }
+
+    get Owner() {
+        return this.owner;
     }
 
     get Title() {
@@ -136,17 +129,8 @@ class PostBuilder {
         return this;
     }
 
-    withContent(content: string) {
-        this.content = content;
-        return this;
-    }
-
     build(owner: string) {
-        return new Post(this.withOwner(owner));
-    }
-
-    withOwner(owner: string) {
-        this.owner = owner
-        return this;
+        this.owner = owner;
+        return new Blog(this);
     }
 }

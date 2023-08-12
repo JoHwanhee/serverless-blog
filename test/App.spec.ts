@@ -24,14 +24,14 @@ describe('App routes', () => {
         app = await initializeApp(dbConnection)
         server = app.listen(3000);
 
-        const newPostData = ( { title: '제목1', description: '소제목1', content: '내용1' });
+        const newPostData = ( { owner: 'chohh', title: '제목1', description: '소제목1', content: '내용1' });
         await request(app)
-            .post('/post')
+            .post('/chohh/post')
             .send(newPostData)
 
-        const newPostData2 = ( { title: '제목2', description: '소제목1', content: '내용2' });
+        const newPostData2 = ( { owner: 'chohh', title: '제목2', description: '소제목1', content: '내용2' });
         await request(app)
-            .post('/post')
+            .post('/chohh/post')
             .send(newPostData2)
     }, 20000);
 
@@ -51,6 +51,20 @@ describe('App routes', () => {
 
             expect(actual).toBe(200);
         });
+    });
+
+    describe('GET /:owner', () => {
+        let response;
+
+        beforeEach(async () => {
+            const title = '제목1';
+            response = await request(app).get(`/chohh`);
+        });
+
+        it('should respond with status 200', async () => {
+            expect(response.statusCode).toBe(200);
+        });
+
 
         it('post 데이터가 h2 태그로 응답이 있어야한다.', async () => {
             const actuals = parseHtmlToPosts(cheerio.load(sut.text));
@@ -76,12 +90,12 @@ describe('App routes', () => {
         }
     });
 
-    describe('GET /post/:title', () => {
+    describe('GET /:owner/post/:title', () => {
         let response;
 
         beforeEach(async () => {
             const title = '제목1';
-            response = await request(app).get(`/post/${encodeURIComponent(title)}`);
+            response = await request(app).get(`/chohh/post/${encodeURIComponent(title)}`);
         });
 
         it('should respond with status 200', async () => {
@@ -111,11 +125,11 @@ describe('App routes', () => {
         }
     });
 
-    describe('새 글 쓰기 페이지 UI 테스트', () => {
+    describe('GET /:owner/write', () => {
         let sut;
 
         beforeAll(async () => {
-            sut = await request(app).get(`/write`);
+            sut = await request(app).get(`/chohh/write`);
         });
 
         it('"/write" 경로에 대한 GET 요청시 200 OK 응답을 반환해야 한다.', () => {
@@ -142,20 +156,20 @@ describe('App routes', () => {
         });
     });
 
-    describe('POST /post', () => {
+    describe('POST /:owner/post', () => {
         let sut;
 
         beforeEach(async () => {
-            const newPostData = { title: 'Test Title', content: 'Test Content' };
+            const newPostData = { owner: 'chohh',title: 'Test Title', content: 'Test Content' };
             sut = await request(app)
-                .post('/post')
+                .post('/chohh/post')
                 .send(newPostData)
         });
 
 
         it('should successfully create a post and redirect to root', async () => {
             expect(sut.status).toBe(302); // 302 is for redirection
-            expect(sut.header.location).toBe('/'); // should redirect to root
+            expect(sut.header.location).toBe('/chohh'); // should redirect to root
         });
     });
 
