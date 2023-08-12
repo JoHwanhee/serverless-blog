@@ -48,8 +48,20 @@ The project also integrates various development tools to make the development sm
 
 During development, ensure that you write tests first, adhering to the TDD approach. The project uses Jest as its primary testing framework. You can run your tests using:
 
+## Setting up local
+
+install and start docker
+
+```bash
+npm run install
+```
+
 ```bash
 npm run test
+```
+
+```bash
+npm run dev
 ```
 
 ## Custom Domain Configuration
