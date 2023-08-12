@@ -2,56 +2,48 @@
 import request from 'supertest';
 
 import * as cheerio from 'cheerio';
-
-
 import { GenericContainer } from 'testcontainers';
-import {IPostRepository} from "../src/posts/IPostRepository";
-import {PostService} from "../src/posts/PostsService";
-import {App} from "../src/App";
-import {PostsController} from "../src/infra/PostsController";
-// @ts-ignore
-import express from "express";
-import {MongoPostRepository} from "../src/infra/MongoPostRepository";
-import {MongoConnection} from "../src/database/MongoConnection";
+import {createDatabaseConnection, initializeApp} from "../src";
 
 describe('App routes', () => {
     let sut
     let container;
-    let appInstance;
     let mongoUri;
-    let repository: IPostRepository;
 
-    let postService;
-    let postController;
+    let dbConnection;
     let app;
+    let server;
 
     beforeAll(async () => {
         container = await new GenericContainer('mongo')
             .withExposedPorts(27017)
             .start();
         mongoUri = `mongodb://${container.getHost()}:${container.getMappedPort(27017)}`;
-        const db = await new MongoConnection()
-            .connect(mongoUri, 'testdb')
-        repository = new MongoPostRepository(db);
+        dbConnection = await createDatabaseConnection(mongoUri, "testDb");
 
-        postService = new PostService(repository);
-        postController = new PostsController(postService);
+        app = await initializeApp(dbConnection)
+        server = app.listen(3000);
 
-        app = express();
-        appInstance = new App(app, [postController]);
+        const newPostData = ( { title: '제목1', content: '내용1' });
+        await request(app)
+            .post('/post')
+            .send(newPostData)
 
-    }, 10000);
+        const newPostData2 = ( { title: '제목2', content: '내용2' });
+        await request(app)
+            .post('/post')
+            .send(newPostData2)
+    }, 20000);
 
     afterAll(async () => {
-        if (container) await container.stop();
+        await dbConnection.close()
+        await container.stop();
+        await server.close();
     });
 
     describe('GET /', () => {
         beforeEach(async () => {
-            await repository.clear()
-            await repository.insertPost({ title: '제목1', content: '내용1' });
-            await repository.insertPost({ title: '제목2', content: '내용2' });
-            sut = await request(appInstance.express()).get('/');
+            sut = await request(app).get('/');
         });
 
         it('200 응답 되어야한다.', async () => {
@@ -87,11 +79,8 @@ describe('App routes', () => {
         let sut;
 
         beforeEach(async () => {
-            await repository.clear()
             const title = '제목1'
-            const post = await repository.insertPost({ title, content: '내용1' });
-
-            sut = await request(appInstance.express()).get(`/post/${encodeURIComponent(title)}`);
+            sut = await request(app).get(`/post/${encodeURIComponent(title)}`);
         });
 
         it('200 응답 되어야한다.', async () => {
@@ -118,7 +107,7 @@ describe('App routes', () => {
         let sut;
 
         beforeAll(async () => {
-            sut = await request(appInstance.express()).get(`/write`);
+            sut = await request(app).get(`/write`);
         });
 
         it('"/write" 경로에 대한 GET 요청시 200 OK 응답을 반환해야 한다.', () => {
@@ -150,7 +139,7 @@ describe('App routes', () => {
 
         beforeEach(async () => {
             const newPostData = { title: 'Test Title', content: 'Test Content' };
-            sut = await request(appInstance.express())
+            sut = await request(app)
                 .post('/post')
                 .send(newPostData)
         });
@@ -167,7 +156,7 @@ describe('App routes', () => {
         let sut;
 
         beforeEach(async () => {
-            sut = await request(appInstance.express()).get('/test.txt');
+            sut = await request(app).get('/test.txt');
         });
 
         it('200 응답 되어야한다.', async () => {

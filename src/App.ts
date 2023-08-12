@@ -41,6 +41,10 @@ export class App {
         });
     }
 
+    public dispose() {
+
+    }
+
     public express(): Express {
         return this.app;
     }

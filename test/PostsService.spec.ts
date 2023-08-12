@@ -3,27 +3,31 @@ import {IPostRepository} from "../src/posts/IPostRepository";
 import {PostService} from "../src/posts/PostsService";
 import {MongoPostRepository} from "../src/infra/MongoPostRepository";
 import {MongoConnection} from "../src/database/MongoConnection";
+import {IDbConnection} from "../src/database/IDbConnection";
 
 describe('PostService', () => {
     let container;
     let repository: IPostRepository;
     let sut: PostService;
+    let dbConnection: IDbConnection
 
     beforeAll(async () => {
         container = await new GenericContainer('mongo')
             .withExposedPorts(27017)
             .start();
         const mongoUri = `mongodb://${container.getHost()}:${container.getMappedPort(27017)}`;
-        const db = await new MongoConnection()
-            .connect(mongoUri, 'testdb')
+        dbConnection = await new MongoConnection()
+        await dbConnection.connect(mongoUri, 'testdb')
 
-        repository = new MongoPostRepository(db);
+        repository = new MongoPostRepository(dbConnection);
         sut = new PostService(repository);
-    }, 10000);
+    }, 20000);
 
     afterAll(async () => {
-        if (container) await container.stop();
-    }, 10000);
+        await dbConnection.close()
+        await container.stop();
+
+    }, 20000);
 
     beforeEach(async () => {
         await repository.clear()

@@ -4,11 +4,11 @@ import {PostService} from "../src/posts/PostsService";
 import {PostsController} from "../src/infra/PostsController";
 import {MongoPostRepository} from "../src/infra/MongoPostRepository";
 import {MongoConnection} from "../src/database/MongoConnection";
-import {Db} from "mongodb";
+import {IDbConnection} from "../src/database/IDbConnection";
 
 describe('Controller functions', () => {
     let container;
-    let db: Db;
+    let dbConnection: IDbConnection;
     let repository: IPostRepository;
     let service: PostService;
     let controller: PostsController;
@@ -19,17 +19,18 @@ describe('Controller functions', () => {
             .start();
         const mongoUri = `mongodb://${container.getHost()}:${container.getMappedPort(27017)}`;
 
-        db = await new MongoConnection()
-            .connect(mongoUri, 'testdb')
+        dbConnection = new MongoConnection()
+        await dbConnection.connect(mongoUri, 'testdb')
 
-        repository = new MongoPostRepository(db);
+        repository = new MongoPostRepository(dbConnection);
         service = new PostService(repository);
         controller = new PostsController(service);
-    }, 10000);
+    }, 20000);
 
     afterAll(async () => {
-        if (container) await container.stop();
-    }, 10000);
+        await dbConnection.close()
+        await container.stop();
+    }, 20000);
 
 
     it('should render the homepage with all posts', async () => {

@@ -2,11 +2,13 @@ import {GenericContainer} from 'testcontainers';
 import {IPostRepository} from "../src/posts/IPostRepository";
 import {MongoPostRepository} from "../src/infra/MongoPostRepository";
 import {MongoConnection} from "../src/database/MongoConnection";
+import {IDbConnection} from "../src/database/IDbConnection";
 
 
 describe('MongoDB class tests with testcontainers', () => {
     let container;
     let repository: IPostRepository;
+    let db: IDbConnection;
 
     beforeAll(async () => {
         container = await new GenericContainer('mongo')
@@ -14,15 +16,16 @@ describe('MongoDB class tests with testcontainers', () => {
             .start();
         const mongoUri = `mongodb://${container.getHost()}:${container.getMappedPort(27017)}`;
 
-        const db = await new MongoConnection()
+        db = await new MongoConnection()
             .connect(mongoUri, 'testdb')
 
         repository = new MongoPostRepository(db);
-    }, 10000);
+    }, 20000);
 
     afterAll(async () => {
-        if (container) await container.stop();
-    }, 10000);
+        await db.close()
+        await container.stop();
+    }, 20000);
 
     it('should fetch all posts', async () => {
         await repository.insertPost({ title: 'Test1' });

@@ -29,7 +29,7 @@ describe('MongoConnection tests with testcontainers', () => {
         if (url) {
             await mongoConnection.connect(url, 'testdb');
         }
-    }, 10000);
+    }, 20000);
 
     afterAll(async () => {
         await mongoConnection.close();

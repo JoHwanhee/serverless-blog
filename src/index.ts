@@ -1,27 +1,48 @@
 import 'reflect-metadata';
-import serverless from 'serverless-http'
-import {PostService} from "./posts/PostsService";
-import {PostsController} from "./infra/PostsController";
-import {App} from "./App";
+import serverless from 'serverless-http';
+import { PostService } from "./posts/PostsService";
+import { PostsController } from "./infra/PostsController";
+import { App } from "./App";
 import express from "express";
-import {MongoPostRepository} from "./infra/MongoPostRepository";
-import {MongoConnection} from "./database/MongoConnection";
+import { MongoPostRepository } from "./infra/MongoPostRepository";
+import { MongoConnection } from "./database/MongoConnection";
+import {Db} from "mongodb";
+import {IDbConnection} from "./database/IDbConnection";
 
-async function initializeApp() {
-    const mongoUri = process.env.MONGO_URI;
+export async function createDatabaseConnection(mongoUri: string, dbName: string) {
+    const connection = new MongoConnection()
+    await connection.connect(mongoUri, dbName);
 
-    const db = await new MongoConnection()
-        .connect(mongoUri, 'testdb')
-    const database = new MongoPostRepository(db);
-
-    const postService = new PostService(database);
-    const postController = new PostsController(postService);
-
-    const appInstance = new App(express(), [postController]);
-    return appInstance.express();
+    return connection
 }
 
+function createPostRepository(db) {
+    return new MongoPostRepository(db);
+}
 
+function createPostService(repository) {
+    return new PostService(repository);
+}
+
+function createPostController(service) {
+    return new PostsController(service);
+}
+
+export async function initializeApp(db: IDbConnection) {
+    const postRepository = createPostRepository(db);
+    const postService = createPostService(postRepository);
+    const postController = createPostController(postService);
+    return new App(express(), [postController]).express();
+}
+
+// Create an application instance outside the handler to reuse it across warm Lambda invocations.
+let cachedApp;
 export const handler = async (event, context) => {
-    return serverless(await initializeApp())(event, context);
+    if (!cachedApp) {
+        const mongouri = process.env.MONGO_URI;
+        const testdb = 'testdb';
+        const db = await createDatabaseConnection(mongouri, testdb);
+        cachedApp = await initializeApp(db);
+    }
+    return serverless(cachedApp)(event, context);
 };
