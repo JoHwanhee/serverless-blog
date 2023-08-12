@@ -35,27 +35,27 @@ describe('PostService', () => {
     })
 
     it('should fetch all posts', async () => {
-        await repository.insertPost({ title: 'Test1' });
-        await repository.insertPost({ title: 'Test2' });
+        await repository.insertPost({ owner: '123', title: 'Test1' });
+        await repository.insertPost({ owner: '123', title: 'Test2' });
 
-        const actual = await sut.getAllPosts();
+        const actual = await sut.getAllPosts('123');
 
         expect(actual.length).toBe(2);
     });
 
     it('should fetch post by id', async () => {
-        const insertedId= await repository.insertPost({ title: 'Test' });
+        const insertedId= await repository.insertPost({ owner: '123', title: 'Test' });
 
-        const actual = await sut.getDetailedPost(encodeURIComponent('Test'));
+        const actual = await sut.getDetailedPost('123', encodeURIComponent('Test'));
 
         expect(actual.getId()).toEqual(insertedId);
     });
 
     it('should create post by content', async () => {
         // @ts-ignore
-        await sut.createPost({ title: 'Test', content: "123" } as Post)
+        await sut.createPost({ owner: '123', title: 'Test', content: "123" } as Post)
 
-        const actual = await sut.getDetailedPost(encodeURIComponent('Test'));
+        const actual = await sut.getDetailedPost('123', encodeURIComponent('Test'));
 
         expect(actual.getTitle()).toEqual( 'Test');
         expect(actual.getContent()).toEqual( '123');

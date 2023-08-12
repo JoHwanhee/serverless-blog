@@ -28,18 +28,18 @@ describe('MongoDB class tests with testcontainers', () => {
     }, 20000);
 
     it('should fetch all posts', async () => {
-        await repository.insertPost({ title: 'Test1' });
-        await repository.insertPost({ title: 'Test2' });
+        await repository.insertPost({ owner: '123',title: 'Test1' });
+        await repository.insertPost({ owner: '123',title: 'Test2' });
 
-        const posts = await repository.getPosts();
+        const posts = await repository.getPosts('123');
 
         expect(posts.length).toBe(2);
     });
 
     it('should fetch post by id', async () => {
-        const insertedId = await repository.insertPost({ title: 'Test' });
+        const insertedId = await repository.insertPost({ owner: '123',title: 'Test' });
 
-        const post = await repository.getPostByTitle('Test');
+        const post = await repository.getPostByTitle('123', 'Test');
 
         expect(post.getId()).toEqual(insertedId);
     });
