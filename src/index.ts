@@ -17,6 +17,7 @@ async function initializeApp() {
     return appInstance.getApp();
 }
 
+
 export const handler = async (event, context) => {
     return serverless(await initializeApp())(event, context);
 };
