@@ -1,4 +1,4 @@
-import {IPostRepository} from "./IPostRepository";
+import {IPostRepository} from "../posts/IPostRepository";
 import {Db} from "mongodb";
 
 export class MongoPostRepository implements IPostRepository {

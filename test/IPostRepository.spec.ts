@@ -1,6 +1,6 @@
 import {GenericContainer} from 'testcontainers';
 import {IPostRepository} from "../src/posts/IPostRepository";
-import {MongoPostRepository} from "../src/posts/MongoPostRepository";
+import {MongoPostRepository} from "../src/infra/MongoPostRepository";
 import {MongoConnection} from "../src/database/MongoConnection";
 
 
@@ -18,11 +18,11 @@ describe('MongoDB class tests with testcontainers', () => {
             .connect(mongoUri, 'testdb')
 
         repository = new MongoPostRepository(db);
-    }, 30000);
+    }, 10000);
 
     afterAll(async () => {
         if (container) await container.stop();
-    }, 30000);
+    }, 10000);
 
     it('should fetch all posts', async () => {
         await repository.insertPost({ title: 'Test1' });

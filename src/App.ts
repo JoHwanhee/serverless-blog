@@ -1,30 +1,36 @@
-
 import express, { Express } from 'express';
 import path from 'path';
-import {IController} from "./posts/IController";
+import {IController} from "./infra/IController";
+
 export class App {
     constructor(
         private readonly app: Express,
         private readonly controllers: IController[]) {
         this.app = app;
 
-        this.setupViewEngine();
-        this.setupStaticFiles();
+        this.setupBodyParser(app);
+        this.setupViewEngine(app);
+        this.setupStaticFiles(app);
         this.setupRoutesFromControllers(app, controllers);
     }
 
-    private setupViewEngine(): void {
-        const currentDir = path.resolve();
-        this.app.set('view engine', 'ejs');
-        this.app.set('views', path.join(currentDir, 'src/views'));
+    private setupBodyParser(app: Express) {
+        app.use(express.json());
+        app.use(express.urlencoded({extended: true}));
     }
 
-    private setupStaticFiles(): void {
+    private setupViewEngine(app: Express): void {
         const currentDir = path.resolve();
-        this.app.use(express.static(path.join(currentDir, 'src/public')));
+        app.set('view engine', 'ejs');
+        app.set('views', path.join(currentDir, 'src/views'));
     }
 
-    private setupRoutesFromControllers(app: any, controllers: IController[]) {
+    private setupStaticFiles(app: Express): void {
+        const currentDir = path.resolve();
+        app.use(express.static(path.join(currentDir, 'src/public')));
+    }
+
+    private setupRoutesFromControllers(app: Express, controllers: IController[]) {
         controllers.forEach(controllerInstance => {
             for (const key of Object.getOwnPropertyNames(Object.getPrototypeOf(controllerInstance))) {
                 const routeMetadata = Reflect.getMetadata("route", controllerInstance, key);

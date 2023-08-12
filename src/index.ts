@@ -1,10 +1,10 @@
 import 'reflect-metadata';
 import serverless from 'serverless-http'
 import {PostService} from "./posts/PostsService";
-import {PostsController} from "./posts/PostsController";
+import {PostsController} from "./infra/PostsController";
 import {App} from "./App";
 import express from "express";
-import {MongoPostRepository} from "./posts/MongoPostRepository";
+import {MongoPostRepository} from "./infra/MongoPostRepository";
 import {MongoConnection} from "./database/MongoConnection";
 
 async function initializeApp() {

@@ -1,8 +1,8 @@
 import { GenericContainer } from 'testcontainers';
 import {IPostRepository} from "../src/posts/IPostRepository";
 import {PostService} from "../src/posts/PostsService";
-import {PostsController} from "../src/posts/PostsController";
-import {MongoPostRepository} from "../src/posts/MongoPostRepository";
+import {PostsController} from "../src/infra/PostsController";
+import {MongoPostRepository} from "../src/infra/MongoPostRepository";
 import {MongoConnection} from "../src/database/MongoConnection";
 import {Db} from "mongodb";
 
@@ -25,11 +25,11 @@ describe('Controller functions', () => {
         repository = new MongoPostRepository(db);
         service = new PostService(repository);
         controller = new PostsController(service);
-    }, 30000);
+    }, 10000);
 
     afterAll(async () => {
         if (container) await container.stop();
-    }, 30000);
+    }, 10000);
 
 
     it('should render the homepage with all posts', async () => {

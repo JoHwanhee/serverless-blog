@@ -8,10 +8,10 @@ import { GenericContainer } from 'testcontainers';
 import {IPostRepository} from "../src/posts/IPostRepository";
 import {PostService} from "../src/posts/PostsService";
 import {App} from "../src/App";
-import {PostsController} from "../src/posts/PostsController";
+import {PostsController} from "../src/infra/PostsController";
 // @ts-ignore
 import express from "express";
-import {MongoPostRepository} from "../src/posts/MongoPostRepository";
+import {MongoPostRepository} from "../src/infra/MongoPostRepository";
 import {MongoConnection} from "../src/database/MongoConnection";
 
 describe('App routes', () => {
@@ -40,7 +40,7 @@ describe('App routes', () => {
         app = express();
         appInstance = new App(app, [postController]);
 
-    }, 30000);
+    }, 10000);
 
     afterAll(async () => {
         if (container) await container.stop();
@@ -113,6 +113,55 @@ describe('App routes', () => {
             return { title, content };
         }
     });
+
+    describe('새 글 쓰기 페이지 UI 테스트', () => {
+        let sut;
+
+        beforeAll(async () => {
+            sut = await request(appInstance.express()).get(`/write`);
+        });
+
+        it('"/write" 경로에 대한 GET 요청시 200 OK 응답을 반환해야 한다.', () => {
+            expect(sut.status).toBe(200);
+        });
+
+        it('제목 입력 필드가 있어야 한다.', () => {
+            const $ = cheerio.load(sut.text);
+            const titleInput = $('input[name="title"]');
+            expect(titleInput.length).toBe(1);
+        });
+
+        it('내용 입력 필드가 있어야 한다.', () => {
+            const $ = cheerio.load(sut.text);
+            const contentTextarea = $('textarea[name="content"]');
+            expect(contentTextarea.length).toBe(1);
+        });
+
+        it('저장 버튼이 있어야 한다.', () => {
+            const $ = cheerio.load(sut.text);
+            const submitButton = $('button[type="submit"]');
+            expect(submitButton.length).toBe(1);
+            expect(submitButton.text()).toBe('저장');
+        });
+    });
+
+    describe('POST /post', () => {
+        let sut;
+
+        beforeEach(async () => {
+            const newPostData = { title: 'Test Title', content: 'Test Content' };
+            sut = await request(appInstance.express())
+                .post('/post')
+                .send(newPostData)
+        });
+
+
+        it('should successfully create a post and redirect to root', async () => {
+            expect(sut.status).toBe(302); // 302 is for redirection
+            expect(sut.header.location).toBe('/'); // should redirect to root
+        });
+    });
+
 
     describe('GET /test.txt', () => {
         let sut;

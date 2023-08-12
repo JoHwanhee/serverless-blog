@@ -14,4 +14,8 @@ export class PostService {
     async getDetailedPost(title: string) {
         return this.db.getPostByTitle(title);
     }
+
+    async createPost(post: {title: any; content: any}) {
+        return this.db.insertPost(post);
+    }
 }
