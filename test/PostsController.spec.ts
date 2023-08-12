@@ -35,6 +35,7 @@ describe('Controller functions', () => {
 
     it('should render the homepage with all posts', async () => {
         const mockPosts = [{ title: 'Test1' }, { title: 'Test2' }];
+        // @ts-ignore
         jest.spyOn(service, 'getAllPosts').mockResolvedValue(mockPosts);
 
         const req = {}; // 필요에 따라 더 상세한 요청 객체를 모조할 수 있습니다.
@@ -49,6 +50,7 @@ describe('Controller functions', () => {
 
     it('should render a detailed post by id', async () => {
         const mockPost = { title: 'Test1', _id: 'some_id' };
+        // @ts-ignore
         jest.spyOn(service, 'getDetailedPost').mockResolvedValue(mockPost);
 
         const req = {

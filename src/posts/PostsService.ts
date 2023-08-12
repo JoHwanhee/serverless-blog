@@ -1,4 +1,5 @@
 import {IPostRepository} from "./IPostRepository";
+import {Post} from "./Post";
 
 export class PostService {
     private db: IPostRepository;
@@ -8,14 +9,14 @@ export class PostService {
     }
 
     async getAllPosts() {
-        return this.db.getPosts();
+        return await this.db.getPosts();
     }
 
     async getDetailedPost(title: string) {
-        return this.db.getPostByTitle(title);
+        return await this.db.getPostByTitle(title);
     }
 
-    async createPost(post: {title: any; content: any}) {
-        return this.db.insertPost(post);
+    async createPost(post: Post) {
+        return await this.db.insertPost(post);
     }
 }

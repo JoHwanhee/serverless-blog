@@ -4,6 +4,7 @@ import {PostService} from "../src/posts/PostsService";
 import {MongoPostRepository} from "../src/infra/MongoPostRepository";
 import {MongoConnection} from "../src/database/MongoConnection";
 import {IDbConnection} from "../src/database/IDbConnection";
+import {Post} from "../src/posts/Post";
 
 describe('PostService', () => {
     let container;
@@ -43,19 +44,20 @@ describe('PostService', () => {
     });
 
     it('should fetch post by id', async () => {
-        const { insertedId } = await repository.insertPost({ title: 'Test' });
+        const insertedId= await repository.insertPost({ title: 'Test' });
 
         const actual = await sut.getDetailedPost(encodeURIComponent('Test'));
 
-        expect(actual).toEqual({ _id: insertedId, title: 'Test' });
+        expect(actual.getId()).toEqual(insertedId);
     });
 
     it('should create post by content', async () => {
-        await sut.createPost({ title: 'Test', content: "123" })
+        // @ts-ignore
+        await sut.createPost({ title: 'Test', content: "123" } as Post)
 
         const actual = await sut.getDetailedPost(encodeURIComponent('Test'));
 
-        expect(actual.title).toEqual( 'Test');
-        expect(actual.content).toEqual( '123');
+        expect(actual.getTitle()).toEqual( 'Test');
+        expect(actual.getContent()).toEqual( '123');
     });
 });

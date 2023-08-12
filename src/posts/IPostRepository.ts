@@ -1,8 +1,9 @@
+import {Post} from "./Post";
 
 export interface IPostRepository {
-    getPosts(): Promise<any[]>;
-    getPostById(id: any): Promise<any>;
-    getPostByTitle(title: any): Promise<any>;
-    insertPost(document: any): Promise<any>;
+    getPosts(): Promise<Post[]>;
+    getPostById(id: any): Promise<Post | null>;
+    getPostByTitle(title: any): Promise<Post | null>;
+    insertPost(document: any): Promise<string>;
     clear(): Promise<any>;
 }

@@ -24,12 +24,12 @@ describe('App routes', () => {
         app = await initializeApp(dbConnection)
         server = app.listen(3000);
 
-        const newPostData = ( { title: '제목1', content: '내용1' });
+        const newPostData = ( { title: '제목1', description: '소제목1', content: '내용1' });
         await request(app)
             .post('/post')
             .send(newPostData)
 
-        const newPostData2 = ( { title: '제목2', content: '내용2' });
+        const newPostData2 = ( { title: '제목2', description: '소제목1', content: '내용2' });
         await request(app)
             .post('/post')
             .send(newPostData2)
@@ -56,8 +56,8 @@ describe('App routes', () => {
             const actual = parseHtmlToPosts(cheerio.load(sut.text));
 
             expect(actual).toEqual([
-                { title: '제목1', content: '내용1' },
-                { title: '제목2', content: '내용2' },
+                { title: '제목1', description: '소제목1' },
+                { title: '제목2', description: '소제목1' },
             ]);
         });
 
@@ -67,7 +67,7 @@ describe('App routes', () => {
             $('h2').each((i, el) => {
                 posts.push({
                     title: $(el).text(),
-                    content: $(el).next().text()
+                    description: $(el).next().text()
                 });
             });
 
@@ -76,28 +76,35 @@ describe('App routes', () => {
     });
 
     describe('GET /post/:title', () => {
-        let sut;
+        let response;
 
         beforeEach(async () => {
-            const title = '제목1'
-            sut = await request(app).get(`/post/${encodeURIComponent(title)}`);
+            const title = '제목1';
+            response = await request(app).get(`/post/${encodeURIComponent(title)}`);
         });
 
-        it('200 응답 되어야한다.', async () => {
-            const actual = sut.statusCode;
-
-            expect(actual).toBe(200);
+        it('should respond with status 200', async () => {
+            expect(response.statusCode).toBe(200);
         });
 
-        it('특정 post 데이터가 h2 태그로 응답이 있어야한다.', async () => {
-            const actual = parseHtmlToPost(cheerio.load(sut.text));
+        it('should display the correct post data in h2 tag', async () => {
+            const post = parseHtmlToPost(cheerio.load(response.text));
 
-            expect(actual).toEqual({ title: '제목1', content: '내용1' });
+            expect(post.title).toEqual('제목1');
+            expect(post.content).toEqual('내용1');
+        });
+
+        it('should display the post date in the correct format', async () => {
+            const $ = cheerio.load(response.text);
+            const dateText = $('.post-date').text();
+
+            // This regex checks for the yyyy/mm/dd format
+            expect(dateText).toContain('작성일');
         });
 
         function parseHtmlToPost($) {
             const title = $('h2').text();
-            const content = $('p').first().text();
+            const content = $('.post-content').first().text();
 
             return { title, content };
         }

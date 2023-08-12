@@ -35,8 +35,8 @@
 
     <% posts.forEach((post, index) => { %>
         <div class="mb-4">
-            <h2><a href="/post/<%= post.title %>"><%= post.title %></a></h2>
-            <p><%= post.content %></p>
+            <h2><a href="/post/<%= post.getTitle() %>"><%= post.getTitle() %></a></h2>
+            <p><%= post.getDescription() %></p>
         </div>
     <% }) %>
 </div>

@@ -1,5 +1,6 @@
 import {PostService} from "../posts/PostsService";
 import {Get, Post} from "../decorators/decorators";
+import * as posts from "../posts/Post";
 import express from "express";
 import {IController} from "./IController";
 
@@ -32,8 +33,14 @@ export class PostsController implements IController {
     // @ts-ignore
     @Post('/post')
     async createPost(req: express.Request, res: express.Response): Promise<void> {
-        const { title, content } = req.body;
-        await this.service.createPost({ title, content });
+        const post = posts.Post.Builder
+            .withTitle(req.body.title)
+            .withThumbnailUrl(req.body.thumbnailUrl)
+            .withDescription(req.body.description)
+            .withContent(req.body.content)
+            .build();
+
+        await this.service.createPost(post);
         res.redirect('/');
     }
 }

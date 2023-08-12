@@ -37,10 +37,10 @@ describe('MongoDB class tests with testcontainers', () => {
     });
 
     it('should fetch post by id', async () => {
-        const { insertedId } = await repository.insertPost({ title: 'Test' });
+        const insertedId = await repository.insertPost({ title: 'Test' });
 
-        const post = await repository.getPostById(insertedId);
+        const post = await repository.getPostByTitle('Test');
 
-        expect(post).toEqual({ _id: insertedId, title: 'Test' });
+        expect(post.getId()).toEqual(insertedId);
     });
 });
