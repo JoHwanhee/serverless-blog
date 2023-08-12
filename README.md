@@ -5,17 +5,22 @@ Develop a cost-effective, serverless blog using AWS Lambda. This project is buil
 ## Architecture Overview
 - AWS Lambda + EJS + Node.js + MongoDB (Atlas 500MB free)
 
-### AWS Lambda
-A compute service by AWS that triggers code in response to certain events, forming the foundation of our serverless infrastructure.
 
-### EJS
-Embedded JavaScript - a templating engine to embed dynamic content into HTML on the server side.
+## Setting up local
 
-### Node.js
-An asynchronous, event-driven JavaScript runtime, enabling scalable server-side applications.
+install and start docker
 
-### MongoDB Atlas
-A cloud-hosted MongoDB service. With a free tier of up to 500MB, it`s ideal for starting projects.
+```bash
+npm run install
+```
+
+```bash
+npm run test
+```
+
+```bash
+npm run dev
+```
 
 ## Dependencies
 
@@ -48,21 +53,60 @@ The project also integrates various development tools to make the development sm
 
 During development, ensure that you write tests first, adhering to the TDD approach. The project uses Jest as its primary testing framework. You can run your tests using:
 
-## Setting up local
+## CI/CD with GitHub Actions
 
-install and start docker
+To automate the build, test, and deployment process of our serverless blog, we're utilizing GitHub Actions. This CI/CD pipeline is triggered on every push to the `main` branch. Here's a brief overview of the pipeline:
 
-```bash
-npm run install
+1. **Checkout Code**: Fetches the latest changes of your code.
+2. **Setup Node.js**: Configures the desired Node.js version.
+3. **Install Dependencies**: Installs all necessary npm packages.
+4. **Build**: Compiles the code if necessary.
+5. **Test**: Runs unit tests to ensure code quality.
+6. **Deploy**: Utilizes the Serverless framework to deploy the application to AWS Lambda.
+
+Here's the actual configuration for the GitHub Actions:
+
+```yaml
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test
+
+      - name: Deploy
+        run: npx serverless deploy --stage production
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          MONGO_URI: ${{ secrets.MONGO_URI }}
 ```
 
-```bash
-npm run test
-```
+Ensure you have the necessary secrets (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and MONGO_URI) set up in your GitHub repository's secrets section to ensure the workflow runs without issues.
 
-```bash
-npm run dev
-```
+
 
 ## Custom Domain Configuration
 1. Navigate to the API Gateway service in the AWS Management Console.
