@@ -22,6 +22,12 @@
         a:hover {
             text-decoration: underline;
         }
+
+        .post-time {
+            font-size: 0.8rem;  /* 글자 크기를 작게 조절 */
+            float: right;      /* 오른쪽으로 배치 */
+            margin-right: 10px;/* 오른쪽 마진 추가 (필요에 따라 조절 가능) */
+        }
     </style>
 </head>
 
@@ -37,8 +43,10 @@
     <% posts.forEach((post, index) => { %>
         <div class="mb-4">
             <h2>
-                <span><%= post.getFormattedCreatedAt() %> - </span>
-                <a href="/post/<%= post.getTitle() %>"><%= post.getTitle() %></a>
+                <a href="/post/<%= post.getTitle() %>">
+                    <span class="post-time"><%= post.getFormattedCreatedAt() %></span>
+                    <%= post.getTitle() %>
+                </a>
             </h2>
             <p class="text-muted"><i><%= post.getDescription() %></i></p>
         </div>
