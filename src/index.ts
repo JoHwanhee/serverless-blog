@@ -6,7 +6,6 @@ import { App } from "./App";
 import express from "express";
 import { MongoPostRepository } from "./infra/MongoPostRepository";
 import { MongoConnection } from "./database/MongoConnection";
-import {Db} from "mongodb";
 import {IDbConnection} from "./database/IDbConnection";
 
 export async function createDatabaseConnection(mongoUri: string, dbName: string) {
