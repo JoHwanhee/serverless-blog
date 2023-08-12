@@ -4,15 +4,17 @@ provider:
   name: aws
   runtime: nodejs16.x
   region: ap-northeast-2
+  environment:
+    MONGO_URI: ${env:MONGO_URI}
 
 package:
   include:
-    - views/**/*
-    - public/**/*
+    - src/views/**/*
+    - src/public/**/*
 
 functions:
   app:
-    handler: index.handler
+    handler: dist/index.handler
     events:
       - http:
           path: /
