@@ -35,7 +35,7 @@ describe('PostService', () => {
     it('should fetch post by id', async () => {
         const { insertedId } = await db.insertPost({ title: 'Test' });
 
-        const post = await postService.getDetailedPost(insertedId);
+        const post = await postService.getDetailedPost(encodeURIComponent('Test'));
 
         expect(post).toEqual({ _id: insertedId, title: 'Test' });
     });
