@@ -8,7 +8,7 @@ export class MongoPostRepository implements IPostRepository {
     constructor(private readonly db: IDbConnection) {}
 
     async getPosts(): Promise<Post[]> {
-        const docs = await this.db.getDb().collection('posts').find({}).toArray();
+        const docs = await this.db.getDb().collection('posts').find({}).sort({ createdAt: -1 }).toArray();
         return docs.map(doc => this.docToPost(doc));
     }
 

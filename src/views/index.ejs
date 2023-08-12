@@ -33,10 +33,14 @@
         <p>개발, 일상에 관한 이야기</p>
     </div>
 
+
     <% posts.forEach((post, index) => { %>
         <div class="mb-4">
-            <h2><a href="/post/<%= post.getTitle() %>"><%= post.getTitle() %></a></h2>
-            <p><%= post.getDescription() %></p>
+            <h2>
+                <span><%= post.getFormattedCreatedAt() %> - </span>
+                <a href="/post/<%= post.getTitle() %>"><%= post.getTitle() %></a>
+            </h2>
+            <p class="text-muted"><i><%= post.getDescription() %></i></p>
         </div>
     <% }) %>
 </div>

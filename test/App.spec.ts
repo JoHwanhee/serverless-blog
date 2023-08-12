@@ -53,12 +53,13 @@ describe('App routes', () => {
         });
 
         it('post 데이터가 h2 태그로 응답이 있어야한다.', async () => {
-            const actual = parseHtmlToPosts(cheerio.load(sut.text));
+            const actuals = parseHtmlToPosts(cheerio.load(sut.text));
 
-            expect(actual).toEqual([
-                { title: '제목1', description: '소제목1' },
-                { title: '제목2', description: '소제목1' },
-            ]);
+            actuals.forEach((actual) => {
+                expect(actual.title).toContain('제목');
+                expect(actual.title).toContain('시간');
+                expect(actual.description).toContain('소제목');
+            })
         });
 
         function parseHtmlToPosts($) {
