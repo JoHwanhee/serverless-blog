@@ -17,6 +17,34 @@ export class Post {
         this.updatedAt = builder.UpdatedAt;
     }
 
+    public getFormattedCreatedAt(): string {
+        const current = new Date();
+        const postDate = new Date(this.createdAt);
+
+        const diffInMs = current.getTime() - postDate.getTime();
+        const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+
+        if (diffInHours < 24) {
+            return `${diffInHours} 시간 전`;
+        } else {
+            return this._getFormattedCreatedAt();
+        }
+    }
+
+    public isThumbnailDisplayable() {
+        if (!this.thumbnailUrl) {
+            return false
+        }
+
+        const urlPattern = /^(https?:\/\/)/; // HTTP or HTTPS URL pattern
+        return urlPattern.test(this.thumbnailUrl);
+    }
+
+    private _getFormattedCreatedAt(): string {
+        const date = new Date(this.createdAt);
+        return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
+    }
+
     static get Builder() {
         return new PostBuilder();
     }
@@ -40,33 +68,6 @@ export class Post {
 
     getContent(): string {
         return this.content;
-    }
-
-    getFormattedCreatedAt(): string {
-        const current = new Date();
-        const postDate = new Date(this.createdAt);
-
-        const diffInMs = current.getTime() - postDate.getTime();
-        const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-
-        if (diffInHours < 24) {
-            return `${diffInHours} 시간 전`;
-        } else {
-            return this._getFormattedCreatedAt();
-        }
-    }
-
-    private _getFormattedCreatedAt(): string {
-        const date = new Date(this.createdAt);
-        return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
-    }
-
-    getCreatedAt(): Date {
-        return this.createdAt;
-    }
-
-    getUpdatedAt(): Date {
-        return this.updatedAt;
     }
 }
 

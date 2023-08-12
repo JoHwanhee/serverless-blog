@@ -36,7 +36,9 @@
     <div class="mt-4">
         <h2 class="mb-2"><%= post.getTitle() %></h2>
         <p class="post-date">작성일: <%= post.getFormattedCreatedAt() %></p> <!-- Date format: yyyy/mm/dd -->
-        <img class="img-fluid mb-3" src="<%= post.getThumbnailUrl() %>" alt="<%= post.getTitle() %>의 썸네일">
+        <% if(post.isThumbnailDisplayable()) { %>
+            <img class="img-fluid mb-3" src="<%= post.getThumbnailUrl() %>" alt="<%= post.getTitle() %>의 썸네일">
+        <% } %>
         <p class="text-muted"><i><%= post.getDescription() %></i></p>
         <hr>
         <p class="post-content"><%= post.getContent() %></p>
