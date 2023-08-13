@@ -16,48 +16,6 @@ export class Controller implements IController {
     }
 
     // @ts-ignore
-    @Get('/auth/callback')
-    async authCallback(req: express.Request, res: express.Response): Promise<void> {
-        try {
-            const CLIENT_ID = '125703249510-5ska8h67gdtojna23e4enr5iqvrl9alc.apps.googleusercontent.com'
-            const client = new OAuth2Client(CLIENT_ID);
-
-            const token = req.query.code; // Google에서 제공하는 인증 코드
-
-            console.log(token)
-            if (!token) {
-                res.status(400).send('No code provided');
-                return;
-            }
-
-
-            const ticket = await client.verifyIdToken({
-                // @ts-ignore
-                idToken: token ?? "",
-                audience: CLIENT_ID,
-            });
-
-            // @ts-ignore
-            const payload = ticket.getPayload();
-
-            if (!payload) {
-                res.status(400).send('Invalid token');
-                return;
-            }
-
-            const userId = payload.sub; // Google 사용자 ID
-            const email = payload.email; // Google 사용자의 이메일
-
-            console.log(userId)
-            // TODO: 위에서 가져온 정보를 사용해 추가적인 인증 처리나 사용자 생성, 세션 관리 등의 작업을 수행합니다.
-
-            res.send('Successfully authenticated!');
-        } catch (err) {
-            res.status(500).send('Authentication failed');
-        }
-    }
-
-    // @ts-ignore
     @Get('/')
     async renderHomepage(req: express.Request, res: express.Response): Promise<void> {
         res.render('index');

@@ -8,8 +8,6 @@
     <!-- Bootstrap CSS -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <meta name="google-signin-client_id" content="125703249510-5ska8h67gdtojna23e4enr5iqvrl9alc.apps.googleusercontent.com">
 
     <style>
         body, h1, h2, h3, h4, h5, h6, p, a {
@@ -32,20 +30,59 @@
         }
     </style>
     <script>
-        function onSignIn(googleUser) {
-            var profile = googleUser.getBasicProfile();
-            console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-            console.log('Name: ' + profile.getName());
-            console.log('Image URL: ' + profile.getImageUrl());
-            console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+        function handleCredentialResponse(googleUser) {
+            console.log('user: ' + JSON.stringify(googleUser)); // Do not send to your backend! Use an ID token instead.
+            // 코드가 존재할 경우 서버로 전송
+            const code = googleUser.credential
+            if (code) {
+                localStorage.setItem('google_auth_code', code);
+
+                fetch(`/auth/callback?code=${code}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('서버 응답:', data);
+                    })
+                    .catch(error => {
+                        console.error('서버 요청 중 오류 발생:', error);
+                    });
+            } else {
+                console.error('Google 인증 응답에서 code를 찾을 수 없습니다.');
+            }
+
         }
 
-        function signOut() {
-            var auth2 = gapi.auth2.getAuthInstance();
-            auth2.signOut().then(function () {
-                console.log('User signed out.');
-            });
-        }
+
+        // 페이지 로드 시 실행되는 함수
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedCode = localStorage.getItem('google_auth_code');
+            if (savedCode) {
+                fetch(`/auth/callback?code=${savedCode}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('서버 로그인 실패');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('서버 응답:', data);
+                    })
+                    .catch(error => {
+                        console.error('서버 요청 중 오류 발생:', error);
+                        // 로그인 시도 중 에러 발생 시 로컬 스토리지의 code 삭제
+                        localStorage.removeItem('google_auth_code');
+                    });
+            }
+        });
     </script>
 </head>
 
@@ -59,7 +96,13 @@
 
     <a href="chohh">조환희 님의 블로그</a>
 
-    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <div id="g_id_onload"
+         data-client_id="125703249510-5ska8h67gdtojna23e4enr5iqvrl9alc.apps.googleusercontent.com"
+         data-callback="handleCredentialResponse">
+    </div>
+    <div class="g_id_signin" data-type="icon" data-text="signup_with"></div>
     <a href="#" onclick="signOut();">Sign out</a>
 
 </div>
