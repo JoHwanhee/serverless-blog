@@ -23,11 +23,22 @@
             text-decoration: underline;
         }
 
-        .post-time {
-            font-size: 0.8rem;  /* 글자 크기를 작게 조절 */
-            float: right;      /* 오른쪽으로 배치 */
-            margin-right: 10px;/* 오른쪽 마진 추가 (필요에 따라 조절 가능) */
+
+        .text-button {
+            background: none;
+            border: none;
+            color: #007bff; /* 이 부분은 원하는 색상으로 변경 가능합니다. */
+            text-decoration: underline;
+            cursor: pointer;
+            padding: 0;
+            font-size: 16px;
         }
+
+        .text-button:hover, .text-button:focus {
+            color: #0056b3; /* 이 부분은 원하는 색상으로 변경 가능합니다. */
+            text-decoration: none;
+        }
+
     </style>
     <script>
         function handleCredentialResponse(googleUser) {
@@ -83,6 +94,7 @@
                     });
             }
         });
+
     </script>
 </head>
 
@@ -94,16 +106,31 @@
         <p>일상에 관한 나의 이야기</p>
     </div>
 
-    <a href="chohh">조환희 님의 블로그</a>
+<!--    <a href="chohh">조환희 님의 블로그</a>-->
 
+<!--    <script src="https://accounts.google.com/gsi/client" async defer></script>-->
+<!--    <div id="g_id_onload"-->
+<!--         data-client_id="125703249510-5ska8h67gdtojna23e4enr5iqvrl9alc.apps.googleusercontent.com"-->
+<!--         data-callback="handleCredentialResponse">-->
+<!--    </div>-->
+<!--    <div class="g_id_signin" data-type="icon" data-text="signup_with"></div>-->
+<!--    <a href="#" onclick="signOut();">Sign out</a>-->
 
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <div id="g_id_onload"
-         data-client_id="125703249510-5ska8h67gdtojna23e4enr5iqvrl9alc.apps.googleusercontent.com"
-         data-callback="handleCredentialResponse">
+    <div class="container">
+        <h1>하루 로그 남기기</h1>
+
+        <form action="post" method="post">
+            <div class="form-group">
+                <input type="text" class="form-control" id="title" name="title" placeholder="한줄 평" required>
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" id="content" name="content" rows="10" placeholder="자세한 나의 하루는.." required></textarea>
+            </div>
+
+            <button type="submit" class="text-button">나만의 블로그 만들어 남기기</button>
+            <button type="submit" class="text-button">익명으로 남기기</button>
+        </form>
     </div>
-    <div class="g_id_signin" data-type="icon" data-text="signup_with"></div>
-    <a href="#" onclick="signOut();">Sign out</a>
 
 </div>
 

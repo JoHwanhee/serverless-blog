@@ -29,7 +29,6 @@ export class LoginController implements IController {
                 return;
             }
 
-
             const ticket = await client.verifyIdToken({
                 // @ts-ignore
                 idToken: token ?? "",

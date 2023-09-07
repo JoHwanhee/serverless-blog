@@ -1,7 +1,22 @@
 import { createDatabaseConnection, initializeApp } from "./index";
 import { GenericContainer } from 'testcontainers';
 
+import { execSync } from 'child_process';
+
+function removeMongoContainers() {
+    try {
+        const command = 'docker ps -a -q --filter ancestor=mongo | xargs docker rm -f';
+        execSync(command);
+        console.log('Previous mongo containers removed.');
+    } catch (error) {
+        console.error('Failed to remove previous mongo containers:', error);
+    }
+}
+
+
 async function startServer() {
+    // removeMongoContainers();
+
     const container = await new GenericContainer('mongo')
         .withExposedPorts(27017)
         .start();

@@ -13,21 +13,44 @@
         body, h1, h2, h3, h4, h5, h6, p, a {
             font-family: 'Noto Sans KR', sans-serif;
         }
+
+        .bottom-sheet-container {
+            position: fixed;
+            bottom: -100%; /* 초기 위치는 화면 아래 */
+            left: 0;
+            width: 100%;
+            height: auto;
+            background-color: #fff;
+            transition: bottom 0.3s; /* 애니메이션 효과 */
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            padding: 20px;
+            box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .show-sheet {
+            bottom: 0; /* 바텀시트가 보여질 때의 위치 */
+        }
+
     </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const sheet = document.querySelector('.bottom-sheet-container');
+            setTimeout(() => {
+                sheet.classList.add('show-sheet');
+            }, 100); // 페이지 로드 후 100ms 뒤에 바텀시트 애니메이션 시작
+        });
+    </script>
 </head>
 
 <body>
-<div class="container mt-5">
+<div class="container mt-5 bottom-sheet-container">
     <h1>새 글 쓰기</h1>
 
     <form action="post" method="post">
         <div class="form-group">
             <label for="title">제목:</label>
             <input type="text" class="form-control" id="title" name="title" required>
-        </div>
-        <div class="form-group">
-            <label for="thumbnailUrl">썸네일 URL:</label>
-            <input type="text" class="form-control" id="thumbnailUrl" name="thumbnailUrl" required>
         </div>
         <div class="form-group">
             <label for="description">디스크립션:</label>
